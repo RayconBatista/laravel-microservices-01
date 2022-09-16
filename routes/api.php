@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Controllers\Api\CategoryController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\{
+    CategoryController,
+    CompanyController
+};
 
 Route::resource('categories', CategoryController::class);
+Route::resource('companies', CompanyController::class);
 
 Route::get('/', function () {
     return response()->json([
