@@ -3,16 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreUpdateCategory;
-use App\Http\Resources\CategoryResource;
-use App\Models\Category;
+use App\Http\Requests\StoreUpdateCompany;
+use App\Http\Resources\CompanyResource;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class CompanyController extends Controller
 {
     protected $repository;
 
-    public function __construct(Category $model)
+    public function __construct(Company $model)
     {
         $this->repository = $model;
     }
@@ -21,11 +21,11 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->repository->paginate();
+        $companies = $this->repository->getCompanies($request->get('filter', ''));
 
-        return CategoryResource::collection($categories);
+        return CompanyResource::collection($companies);
     }
 
     /**
@@ -34,10 +34,10 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreUpdateCategory $request)
+    public function store(StoreUpdateCompany $request)
     {
-        $category = $this->repository->create($request->validated());
-        return new CategoryResource($category);
+        $companies = $this->repository->create($request->validated());
+        return new CompanyResource($companies);
     }
 
     /**
@@ -46,10 +46,10 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($url)
+    public function show($uuid)
     {
-        $category = $this->repository->where('url', $url)->firstOrFail();
-        return new CategoryResource($category);
+        $company = $this->repository->where('uuid', $uuid)->firstOrFail();
+        return new CompanyResource($company);
     }
 
     /**
@@ -59,12 +59,12 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StoreUpdateCategory $request, $url)
+    public function update(StoreUpdateCompany $request, $uuid)
     {
-        $category = $this->repository->where('url', $url)->firstOrFail();
-        $category->update($request->validated());
+        $company = $this->repository->where('uuid', $uuid)->firstOrFail();
+        $company->update($request->validated());
         return response()->json([
-            'message' => 'success'
+            'message' => 'Updated'
         ]);
     }
 
@@ -74,10 +74,10 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($url)
+    public function destroy($uuid)
     {
-        $category = $this->repository->where('url', $url)->firstOrFail();
-        $category->delete();
+        $company = $this->repository->where('uuid', $uuid)->firstOrFail();
+        $company->delete();
         return response()->json([], 204);
     }
 }
